@@ -1,17 +1,16 @@
 import { serve } from '@hono/node-server';
-import { Hono } from 'hono';
 
-const app = new Hono();
+import app from '@/app';
+import { env } from '@/utils/env';
 
-app.get('/', (c) => {
-  return c.text('Hello Hono!');
-});
+const port = env.PORT;
 
-const port = process.env.PORT || 3000;
-
-console.log(`Server is running on http://localhost:${port}`);
-
-serve({
-  fetch: app.fetch,
-  port: 3000,
-});
+serve(
+  {
+    fetch: app.fetch,
+    port,
+  },
+  (info) => {
+    console.log(`Server is running on http://localhost:${info.port}`);
+  }
+);
