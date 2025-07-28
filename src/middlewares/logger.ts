@@ -11,7 +11,7 @@ export function logger() {
       {
         level: env.LOG_LEVEL,
       },
-      pinoPretty()
+      env.NODE_ENV === 'production' ? undefined : pinoPretty()
     ),
     http: {
       reqId: () => crypto.randomUUID(),
