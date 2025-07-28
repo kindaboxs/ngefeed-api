@@ -9,5 +9,7 @@ export default antfu({
     'style/arrow-parens': 'off',
     'style/comma-dangle': 'off',
     'style/semi': 'off',
+    'style/member-delimiter-style': 'off',
+    'style/operator-linebreak': 'off',
   },
 });

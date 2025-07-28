@@ -1,6 +1,7 @@
 import { serve } from '@hono/node-server';
 
 import app from '@/app';
+import { cusLog } from '@/middlewares';
 import { env } from '@/utils/env';
 
 const port = env.PORT;
@@ -11,6 +12,6 @@ serve(
     port,
   },
   (info) => {
-    console.log(`Server is running on http://localhost:${info.port}`);
+    cusLog.info(`Server is running on http://localhost:${info.port}`);
   }
 );
