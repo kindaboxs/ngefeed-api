@@ -48,4 +48,4 @@ lerna-debug.log*
 next-env.d.ts
 
 # misc
-pnpm-lock.yaml
+pnpm-*
