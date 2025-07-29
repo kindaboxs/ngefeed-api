@@ -49,3 +49,4 @@ next-env.d.ts
 
 # misc
 pnpm-*
+/src/lib/generated
