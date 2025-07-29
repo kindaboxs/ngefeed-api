@@ -7,8 +7,6 @@ model PostUpvote {
   post Post @relation("PostUpvotes", fields: [postId], references: [id], onDelete: Cascade)
   user User @relation("UserPostUpvotes", fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([postId])
-  @@unique([userId])
   @@unique([postId, userId])
   @@map("post_upvotes")
 }
@@ -22,8 +20,6 @@ model CommentUpvote {
   comment Comment @relation("CommentUpvotes", fields: [commentId], references: [id], onDelete: Cascade)
   user    User    @relation("UserCommentUpvotes", fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([commentId])
-  @@unique([userId])
   @@unique([commentId, userId])
   @@map("comment_upvotes")
 }

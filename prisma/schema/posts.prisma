@@ -10,10 +10,9 @@ model Post {
   updatedAt    DateTime @updatedAt @map("updated_at")
 
   // relations
-  author      User         @relation("UserPosts", fields: [userId], references: [id])
+  author      User         @relation("UserPosts", fields: [userId], references: [id], onDelete: Cascade)
   comments    Comment[]    @relation("PostComments")
   postUpvotes PostUpvote[] @relation("PostUpvotes")
 
-  @@unique([userId])
   @@map("posts")
 }

@@ -1,5 +1,5 @@
 model User {
-  id              String    @id
+  id              String   @id
   name            String
   email           String
   emailVerified   Boolean
@@ -10,8 +10,8 @@ model User {
   displayUsername String?
 
   // relations
-  sessions        Session[]
-  accounts        Account[]
+  sessions       Session[]
+  accounts       Account[]
   posts          Post[]          @relation("UserPosts")
   comments       Comment[]       @relation("UserComments")
   postUpvotes    PostUpvote[]    @relation("UserPostUpvotes")
