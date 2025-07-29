@@ -1,8 +1,8 @@
 model Comment {
   id              Int      @id @default(autoincrement())
-  userId          String   @map("user_id")
-  postId          Int      @map("post_id")
-  parentCommentId Int?     @map("parent_comment_id")
+  userId          String   @unique @map("user_id")
+  postId          Int      @unique @map("post_id")
+  parentCommentId Int?     @unique @map("parent_comment_id")
   content         String
   depth           Int      @default(0)
   commentCount    Int      @default(0) @map("comment_count")
@@ -11,14 +11,11 @@ model Comment {
   updatedAt       DateTime @updatedAt @map("updated_at")
 
   // relations
-  author         User            @relation("UserComments", fields: [userId], references: [id])
+  author         User            @relation("UserComments", fields: [userId], references: [id], onDelete: Cascade)
   post           Post            @relation("PostComments", fields: [postId], references: [id], onDelete: Cascade)
   parentComment  Comment?        @relation("CommentReplies", fields: [parentCommentId], references: [id], onDelete: Cascade)
   childComments  Comment[]       @relation("CommentReplies")
   commentUpvotes CommentUpvote[] @relation("CommentUpvotes")
 
-  @@unique([userId])
-  @@unique([postId])
-  @@unique([parentCommentId])
   @@map("comments")
 }
