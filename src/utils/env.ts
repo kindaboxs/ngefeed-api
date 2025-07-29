@@ -15,6 +15,7 @@ export const env = createEnv({
     LOG_LEVEL: z
       .enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal', 'silent'])
       .default('info'),
+    BETTER_AUTH_SECRET: z.string(),
   },
 
   /**
@@ -23,7 +24,10 @@ export const env = createEnv({
    */
   clientPrefix: 'PUBLIC_',
 
-  client: {},
+  client: {
+    PUBLIC_BETTER_AUTH_URL: z.string(),
+    PUBLIC_CORS_ORIGINS: z.string(),
+  },
 
   /**
    * What object holds the environment variables at runtime. This is usually
