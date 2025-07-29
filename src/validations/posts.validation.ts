@@ -12,6 +12,10 @@ export const postsQuerySchema = z.object({
   site: z.string().optional(),
 });
 
+export const postIdSchema = z.object({
+  id: z.coerce.number().min(1),
+});
+
 export const createPostSchema = z
   .object({
     title: z.string().min(1, 'Title is required').max(300, 'Title too long'),

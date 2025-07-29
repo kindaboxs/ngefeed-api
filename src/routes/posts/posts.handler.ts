@@ -1,10 +1,15 @@
 import type { PaginatedResponse, Post, SuccessResponse } from '@/types';
 
 import { zValidator } from '@hono/zod-validator';
+import { HTTPException } from 'hono/http-exception';
 import factory from '@/lib/factory';
 import { authMiddleware, optionalAuthMiddleware } from '@/middlewares/auth';
 import * as HTTP_STATUS_CODES from '@/utils/http-status-codes';
-import { createPostSchema, postsQuerySchema } from '@/validations';
+import {
+  createPostSchema,
+  postIdSchema,
+  postsQuerySchema,
+} from '@/validations';
 
 // get all posts (public)
 export const getAll = factory.createHandlers(
@@ -74,6 +79,64 @@ export const getAll = factory.createHandlers(
         totalPages: Math.ceil(count / limit),
       },
       data: formattedPosts,
+    };
+
+    return c.json(result, HTTP_STATUS_CODES.OK);
+  }
+);
+
+// get one post (public)
+export const getOne = factory.createHandlers(
+  optionalAuthMiddleware,
+  zValidator('param', postIdSchema),
+  async (c) => {
+    const { id } = c.req.valid('param');
+
+    const user = c.get('user');
+
+    const post = await c.var.db.post.findUnique({
+      where: { id },
+      include: {
+        author: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
+        ...(user && {
+          postUpvotes: {
+            where: { userId: user.id },
+            select: {
+              userId: true,
+            },
+          },
+        }),
+      },
+    });
+
+    if (!post) {
+      throw new HTTPException(HTTP_STATUS_CODES.NOT_FOUND, {
+        message: 'Post not found',
+      });
+    }
+
+    const formattedPost = {
+      id: post.id,
+      title: post.title,
+      url: post.url,
+      content: post.content,
+      points: post.points,
+      commentCount: post.commentCount,
+      author: post.author,
+      isUpvoted: user ? post.postUpvotes.length > 0 : false,
+      createdAt: post.createdAt,
+      updatedAt: post.updatedAt,
+    } as Post;
+
+    const result: SuccessResponse<Post> = {
+      success: true,
+      message: 'Post fetched',
+      data: formattedPost,
     };
 
     return c.json(result, HTTP_STATUS_CODES.OK);
