@@ -1,7 +1,7 @@
 model PostUpvote {
   id     Int    @id @default(autoincrement())
-  postId Int    @unique @map("post_id")
-  userId String @unique @map("user_id")
+  postId Int    @map("post_id")
+  userId String @map("user_id")
 
   // relations
   post Post @relation("PostUpvotes", fields: [postId], references: [id], onDelete: Cascade)
@@ -13,8 +13,8 @@ model PostUpvote {
 
 model CommentUpvote {
   id        Int    @id @default(autoincrement())
-  commentId Int    @unique @map("comment_id")
-  userId    String @unique @map("user_id")
+  commentId Int    @map("comment_id")
+  userId    String @map("user_id")
 
   // relations
   comment Comment @relation("CommentUpvotes", fields: [commentId], references: [id], onDelete: Cascade)
