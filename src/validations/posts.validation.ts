@@ -26,3 +26,5 @@ export const createPostSchema = z
     message: 'Either URL or content is required',
     path: ['url', 'content'],
   });
+
+export const updatePostSchema = createPostSchema.partial();
