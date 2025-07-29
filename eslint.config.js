@@ -11,5 +11,7 @@ export default antfu({
     'style/semi': 'off',
     'style/member-delimiter-style': 'off',
     'style/operator-linebreak': 'off',
+    'antfu/if-newline': 'off',
   },
+  ignores: ['./src/lib/generated/**'],
 });
