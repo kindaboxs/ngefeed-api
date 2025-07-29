@@ -1,5 +1,17 @@
 import { z } from 'zod';
 
+const sortSchema = z.enum(['hot', 'top', 'newest']);
+const orderSchema = z.enum(['asc', 'desc']);
+
+export const postsQuerySchema = z.object({
+  limit: z.coerce.number().min(10).max(100).optional().default(10),
+  page: z.coerce.number().min(1).optional().default(1),
+  sort: sortSchema.optional().default('hot'),
+  order: orderSchema.optional().default('desc'),
+  author: z.optional(z.string()),
+  site: z.string().optional(),
+});
+
 export const createPostSchema = z
   .object({
     title: z.string().min(1, 'Title is required').max(300, 'Title too long'),
