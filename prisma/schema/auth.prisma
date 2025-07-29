@@ -8,8 +8,14 @@ model User {
   updatedAt       DateTime
   username        String?
   displayUsername String?
+
+  // relations
   sessions        Session[]
   accounts        Account[]
+  posts          Post[]          @relation("UserPosts")
+  comments       Comment[]       @relation("UserComments")
+  postUpvotes    PostUpvote[]    @relation("UserPostUpvotes")
+  commentUpvotes CommentUpvote[] @relation("UserCommentUpvotes")
 
   @@unique([email])
   @@unique([username])
@@ -60,4 +66,3 @@ model Verification {
 
   @@map("verification")
 }
-
