@@ -1,0 +1,29 @@
+model PostUpvote {
+  id     Int    @id @default(autoincrement())
+  postId Int    @map("post_id")
+  userId String @map("user_id")
+
+  // relations
+  post Post @relation("PostUpvotes", fields: [postId], references: [id], onDelete: Cascade)
+  user User @relation("UserPostUpvotes", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId])
+  @@unique([userId])
+  @@unique([postId, userId])
+  @@map("post_upvotes")
+}
+
+model CommentUpvote {
+  id        Int    @id @default(autoincrement())
+  commentId Int    @map("comment_id")
+  userId    String @map("user_id")
+
+  // relations
+  comment Comment @relation("CommentUpvotes", fields: [commentId], references: [id], onDelete: Cascade)
+  user    User    @relation("UserCommentUpvotes", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([commentId])
+  @@unique([userId])
+  @@unique([commentId, userId])
+  @@map("comment_upvotes")
+}

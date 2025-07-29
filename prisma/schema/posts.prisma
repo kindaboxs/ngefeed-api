@@ -1,0 +1,19 @@
+model Post {
+  id           Int      @id @default(autoincrement())
+  userId       String   @map("user_id")
+  title        String
+  url          String?
+  content      String?
+  points       Int      @default(0)
+  commentCount Int      @default(0) @map("comment_count")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // relations
+  author      User         @relation("UserPosts", fields: [userId], references: [id])
+  comments    Comment[]    @relation("PostComments")
+  postUpvotes PostUpvote[] @relation("PostUpvotes")
+
+  @@unique([userId])
+  @@map("posts")
+}
