@@ -1,11 +1,19 @@
-import { Hono } from 'hono';
-import { createFactory } from 'hono/factory';
+import type { AppBindings } from '@/types/app-bindings';
 
-const factory = createFactory({
-  initApp: () => new Hono(),
+import { createFactory } from 'hono/factory';
+import { db } from '@/db';
+
+export default createFactory<AppBindings>({
+  initApp: (app) => {
+    // Inject database client
+    app.use('*', async (c, next) => {
+      c.set('db', db);
+
+      await next();
+    });
+  },
+
   defaultAppOptions: {
     strict: false,
   },
 });
-
-export default factory;
