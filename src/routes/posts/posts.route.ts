@@ -12,4 +12,10 @@ posts.get('/:id', ...handlers.getOne);
 // create post (private)
 posts.post('/', ...handlers.create);
 
+// update post (private)
+posts.patch('/:id', ...handlers.update);
+
+// delete post (private)
+posts.delete('/:id', ...handlers.remove);
+
 export default posts;

@@ -9,6 +9,7 @@ import {
   createPostSchema,
   postIdSchema,
   postsQuerySchema,
+  updatePostSchema,
 } from '@/validations';
 
 // get all posts (public)
@@ -173,5 +174,94 @@ export const create = factory.createHandlers(
     };
 
     return c.json(result, HTTP_STATUS_CODES.CREATED);
+  }
+);
+
+// update post (private)
+export const update = factory.createHandlers(
+  authMiddleware,
+  zValidator('param', postIdSchema),
+  zValidator('json', updatePostSchema),
+  async (c) => {
+    const { id } = c.req.valid('param');
+    const { title, url, content } = c.req.valid('json');
+
+    const user = c.get('user')!;
+
+    const post = await c.var.db.post.findUnique({
+      where: { id },
+      select: {
+        userId: true,
+      },
+    });
+
+    if (!post) {
+      throw new HTTPException(HTTP_STATUS_CODES.NOT_FOUND, {
+        message: 'Post not found',
+      });
+    }
+
+    if (post.userId !== user.id) {
+      throw new HTTPException(HTTP_STATUS_CODES.FORBIDDEN, {
+        message: 'Unauthorized',
+      });
+    }
+
+    await c.var.db.post.update({
+      where: { id },
+      data: {
+        title,
+        url,
+        content,
+      },
+    });
+
+    const result: SuccessResponse = {
+      success: true,
+      message: 'Post updated',
+    };
+
+    return c.json(result, HTTP_STATUS_CODES.OK);
+  }
+);
+
+// delete post (private)
+export const remove = factory.createHandlers(
+  authMiddleware,
+  zValidator('param', postIdSchema),
+  async (c) => {
+    const { id } = c.req.valid('param');
+
+    const user = c.get('user')!;
+
+    const post = await c.var.db.post.findUnique({
+      where: { id },
+      select: {
+        userId: true,
+      },
+    });
+
+    if (!post) {
+      throw new HTTPException(HTTP_STATUS_CODES.NOT_FOUND, {
+        message: 'Post not found',
+      });
+    }
+
+    if (post.userId !== user.id) {
+      throw new HTTPException(HTTP_STATUS_CODES.FORBIDDEN, {
+        message: 'Unauthorized',
+      });
+    }
+
+    await c.var.db.post.delete({
+      where: { id },
+    });
+
+    const result: SuccessResponse = {
+      success: true,
+      message: 'Post deleted',
+    };
+
+    return c.json(result, HTTP_STATUS_CODES.OK);
   }
 );
