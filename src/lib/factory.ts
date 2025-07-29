@@ -1,6 +1,7 @@
-import type { AppBindings } from '@/types/app-bindings';
+import type { AppBindings } from '@/types';
 
 import { createFactory } from 'hono/factory';
+
 import { db } from '@/db';
 
 export default createFactory<AppBindings>({
