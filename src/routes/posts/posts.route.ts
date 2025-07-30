@@ -18,4 +18,7 @@ posts.patch('/:id', ...handlers.update);
 // delete post (private)
 posts.delete('/:id', ...handlers.remove);
 
+// upvote post (private)
+posts.post('/:id/upvote', ...handlers.upvote);
+
 export default posts;

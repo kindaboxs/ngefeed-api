@@ -27,4 +27,12 @@ export const createPostSchema = z
     path: ['url', 'content'],
   });
 
-export const updatePostSchema = createPostSchema.partial();
+export const updatePostSchema = createPostSchema.partial().refine(
+  (data) => {
+    return Object.values(data).some((value) => value !== undefined);
+  },
+  {
+    message: 'At least one field must be provided to update',
+    path: ['url', 'content'],
+  }
+);

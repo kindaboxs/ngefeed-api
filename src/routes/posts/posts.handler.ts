@@ -265,3 +265,92 @@ export const remove = factory.createHandlers(
     return c.json(result, HTTP_STATUS_CODES.OK);
   }
 );
+
+// upvote post (private)
+export const upvote = factory.createHandlers(
+  authMiddleware,
+  zValidator('param', postIdSchema),
+  async (c) => {
+    const { id } = c.req.valid('param');
+
+    const user = c.get('user')!;
+
+    const post = await c.var.db.post.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        userId: true,
+      },
+    });
+
+    if (!post) {
+      throw new HTTPException(HTTP_STATUS_CODES.NOT_FOUND, {
+        message: 'Post not found',
+      });
+    }
+
+    let pointsChange: -1 | 1 = 1;
+
+    const points = await c.var.db.$transaction(async (tx) => {
+      const existingUpvote = await tx.postUpvote.findUnique({
+        where: {
+          postId_userId: {
+            postId: id,
+            userId: user.id,
+          },
+        },
+      });
+
+      pointsChange = existingUpvote ? -1 : 1;
+
+      const updatedPost = await tx.post.update({
+        where: { id },
+        data: {
+          points: {
+            increment: pointsChange,
+          },
+        },
+        select: {
+          points: true,
+        },
+      });
+
+      if (!updatedPost) {
+        throw new HTTPException(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR, {
+          message: 'Failed to Upvote post',
+        });
+      }
+
+      if (existingUpvote) {
+        await tx.postUpvote.delete({
+          where: {
+            postId_userId: {
+              postId: id,
+              userId: user.id,
+            },
+          },
+        });
+      } else {
+        await tx.postUpvote.create({
+          data: {
+            postId: id,
+            userId: user.id,
+          },
+        });
+      }
+
+      return updatedPost.points;
+    });
+
+    const result: SuccessResponse<{ count: number; isUpvoted: boolean }> = {
+      success: true,
+      message: pointsChange > 0 ? 'Post upvoted' : 'Post downvoted',
+      data: {
+        count: points,
+        isUpvoted: pointsChange > 0,
+      },
+    };
+
+    return c.json(result, HTTP_STATUS_CODES.OK);
+  }
+);
