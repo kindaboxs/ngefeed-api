@@ -9,8 +9,10 @@ const allowedOrigins = env.PUBLIC_CORS_ORIGINS.split(',');
 
 const corsOptions = {
   origin: allowedOrigins,
-  allowMethods: ['GET', 'POST', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'Authorization'],
+  allowMethods: ['POST', 'GET', 'OPTIONS'],
+  exposeHeaders: ['Content-Length'],
+  maxAge: 600,
   credentials: true,
 };
 
