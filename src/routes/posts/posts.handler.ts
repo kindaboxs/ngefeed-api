@@ -289,6 +289,12 @@ export const upvote = factory.createHandlers(
       });
     }
 
+    if (post.userId === user.id) {
+      throw new HTTPException(HTTP_STATUS_CODES.FORBIDDEN, {
+        message: 'Cannot upvote your own post',
+      });
+    }
+
     let pointsChange: -1 | 1 = 1;
 
     const points = await c.var.db.$transaction(async (tx) => {
